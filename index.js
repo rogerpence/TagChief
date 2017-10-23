@@ -1,10 +1,9 @@
-var mytags = document.querySelectorAll('.tag-x');
-
 function removeTag(ele) {
     ele.removeEventListener('click', () => { removeTag(mytag); });
-    //ele.parentElement.parentElement.removeChild(ele.parentElement);
+    ele.parentElement.parentElement.removeChild(ele.parentElement);
 }
 
+var mytags = document.querySelectorAll('.tag-x');
 [].forEach.call(mytags, function(mytag) {
     mytag.addEventListener('click', () => { removeTag(mytag); }, false);
 });
