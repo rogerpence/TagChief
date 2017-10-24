@@ -16,7 +16,7 @@ var refreshTagsList = () => {
     const tagsList = getTagsTextAsArray();
 
     document.getElementById('test-input').value = tagsList.sort().join(',');
-    i = 1;
+    let i = 1;
     tagsList.sort().forEach(function(element) {
         tagElement = document.getElementById('tag-' + element);
         tagElement.setAttribute('style', 'order:' + i);
