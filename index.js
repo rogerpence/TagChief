@@ -15,11 +15,24 @@ document.querySelector('#test-button').addEventListener('click', function(ev) {
 });    
 
 document.querySelector('input.tag-text-input').addEventListener('keydown', function(ev) {
+    const BACKSPACEKEY = 8;
     const TABKEY = 9;
     const ENTERKEY = 13;
 
     let e = ev || window.event;
 
+    // Half-assed attempt to delete last tag with backspace key. 
+    // if (e.keyCode==BACKSPACEKEY) {
+    //     var j = document.querySelector('input.tag-text-input').previousElementSibling;    
+    //     if (j !== null) {
+    //         j.previousElementSibling.click();
+    //     }        
+    
+    //     e.preventDefault();
+    //     this.focus();
+    //     return false;
+    // }
+    
     if (e.keyCode == TABKEY || e.keyCode == ENTERKEY) {
         if (this.value.trim() == '') {
             e.preventDefault();
@@ -33,6 +46,9 @@ document.querySelector('input.tag-text-input').addEventListener('keydown', funct
         this.focus();
         return false;
     }
+
+
+
 });
 
 function insertTag(tag) {
