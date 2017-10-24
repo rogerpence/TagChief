@@ -84,9 +84,9 @@ document.querySelector('input.tag-text-input').addEventListener('keydown', funct
             return false;
         }
 
-        e.preventDefault();
         insertTag(this.value.toLowerCase());
         this.value = '';
+        e.preventDefault();
         this.focus();
         return false;
     }
