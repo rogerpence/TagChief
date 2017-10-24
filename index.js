@@ -1,9 +1,26 @@
+
+var refreshTagsList = () => {
+    const tags = document.querySelectorAll('span[id^="tag-"]');
+    const tagsList = [];
+
+    for (i = 0; i < tags.length; ++i) {
+        const tag = tags[i];
+        tagsList.push(tag.textContent.trim());
+    };
+    document.getElementById('test-input').value = tagsList.join(',');   
+};    
+
+document.querySelector('#test-button').addEventListener('click', function(ev) {
+    refreshTagsList();
+});    
+
 document.querySelector('input.tag-text-input').addEventListener('keydown', function(ev) {
     const TABKEY = 9;
+    const ENTERKEY = 13;
 
     let e = ev || window.event;
 
-    if (e.keyCode == TABKEY) {
+    if (e.keyCode == TABKEY || e.keyCode == ENTERKEY) {
         if (this.value.trim() == '') {
             e.preventDefault();
             this.focus();
@@ -27,6 +44,8 @@ function insertTag(tag) {
     ele = document.querySelector('input.tag-text-input');    
     ele.insertAdjacentHTML('beforebegin', html);
 
+    refreshTagsList();
+    
     // Assign delete tag action on tag click. 
     let mytag = document.getElementById('tag-' + tag);
     mytag.addEventListener('click', 
@@ -35,6 +54,7 @@ function insertTag(tag) {
             var tagOwnerElement = document.getElementById(tagOwnerId);            
             // Remove tag. Its click event handler is removed automatically.
             tagOwnerElement.parentElement.removeChild(tagOwnerElement);       
+            refreshTagsList();
             // Put focus back into input tag. 
             document.querySelector('input.tag-text-input').focus();
         },
