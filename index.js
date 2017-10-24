@@ -1,14 +1,4 @@
-function removeTag(ele) {
-    ele.removeEventListener('click', () => { removeTag(mytag); });
-    ele.parentElement.parentElement.removeChild(ele.parentElement);
-}
-
-var mytags = document.querySelectorAll('.tag-x');
-[].forEach.call(mytags, function(mytag) {
-    mytag.addEventListener('click', () => { removeTag(mytag); }, false);
-});
-
-document.querySelector('.tag-input').addEventListener('keydown', function(ev) {
+document.querySelector('input.tag-text-input').addEventListener('keydown', function(ev) {
     const TABKEY = 9;
 
     let e = ev || window.event;
@@ -29,16 +19,28 @@ document.querySelector('.tag-input').addEventListener('keydown', function(ev) {
 });
 
 function insertTag(tag) {
-    const temp = '<span class="tag">{{tag}}<a data-tag="{{tag}}" href="#" class="tag-x"><i class="fa fa-trash"></i></a></span>';
+    const REMOVE_HANDLER_AFTER_FIRST_USE = true;
+    const template = '<span id="span-{{tag}}" class="tag">{{tag}}<a href="#" class="tag-x"><i data-tag="span-{{tag}}" class="fa fa-trash"></i></a></span>';   
+    let html = template.replace(/{{tag}}/g, tag);
 
-    ele = document.querySelector('.tag-input');
-
-    let html = temp.replace(/{{tag}}/g, tag);
+    // Insert new tag html immediately before tag
+    ele = document.querySelector('input.tag-text-input');    
     ele.insertAdjacentHTML('beforebegin', html);
 
-    let mytag = document.querySelector('a[data-tag="' + tag + '"');
-    mytag.addEventListener('click', () => { removeTag(mytag); }, false);
-}
+    // Assign delete tag action on tag click. 
+    let mytag = document.getElementById('span-' + tag);
+    mytag.addEventListener('click', 
+        function(e) {
+            var tagOwnerId = e.target.getAttribute('data-tag');
+            var tagOwnerElement = document.getElementById(tagOwnerId);            
+            // Remove tag. Its click event handler is removed automatically.
+            tagOwnerElement.parentElement.removeChild(tagOwnerElement);       
+            // Put focus back into input tag. 
+            document.querySelector('input.tag-text-input').focus();
+        },
+        {'once': REMOVE_HANDLER_AFTER_FIRST_USE}
+    );
+}    
 
 function insertInitialTags(initialTags) {
     initialTags.forEach(function(tag) {
