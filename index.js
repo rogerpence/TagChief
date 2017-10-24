@@ -1,4 +1,4 @@
-var refreshTagsList = () => {
+var getTagsTextAsArray = () => {
     const tags = document.querySelectorAll('span[id^="tag-"]');
     const tagsList = [];
 
@@ -8,29 +8,28 @@ var refreshTagsList = () => {
         const tag = tags[i];
         tagsList.push(tag.textContent.trim());
     };
+
+    return tagsList
+};
+
+var refreshTagsList = () => {
+    const tagsList = getTagsTextAsArray();
 
     document.getElementById('test-input').value = tagsList.sort().join(',');
     i = 1;
     tagsList.sort().forEach(function(element) {
         tagElement = document.getElementById('tag-' + element);
-        tagElement.setAttribute('style', 'order:' + i++);
+        tagElement.setAttribute('style', 'order:' + i);
+        tagElement.setAttribute('tabindex', i + 100);
+        i++;
     });
 };
 
 var isDuplicate = function(tagText) {
-    const tags = document.querySelectorAll('span[id^="tag-"]');
-    const tagsList = [];
-
-    let i = 0;
-
-    for (i = 0; i < tags.length; i++) {
-        const tag = tags[i];
-        tagsList.push(tag.textContent.trim());
-    };
+    const tagsList = getTagsTextAsArray();
 
     return tagsList.includes(tagText);
 }
-
 
 document.querySelector('#test-button').addEventListener('click', function(ev) {
     refreshTagsList();
