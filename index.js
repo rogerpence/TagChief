@@ -28,7 +28,17 @@ var refreshTagsList = () => {
 var isDuplicate = function(tagText) {
     const tagsList = getTagsTextAsArray();
 
-    return tagsList.includes(tagText);
+    const isDupe = tagsList.includes(tagText);
+
+    if (isDupe) {
+        let dupedTag = document.getElementById('tag-' + tagText);
+        dupedTag.classList.add('dupe-flash');
+        window.setTimeout(function() {
+            dupedTag.classList.remove('dupe-flash');
+        }, 800);
+    }
+
+    return isDupe;
 }
 
 document.querySelector('#test-button').addEventListener('click', function(ev) {
@@ -67,7 +77,7 @@ document.querySelector('input.tag-text-input').addEventListener('keydown', funct
             return false;
         }
 
-        if (isDuplicate(this.value.trim())) {
+        if (isDuplicate(this.value.trim().toLowerCase())) {
             this.value = '';
             e.preventDefault();
             this.focus();
@@ -75,7 +85,7 @@ document.querySelector('input.tag-text-input').addEventListener('keydown', funct
         }
 
         e.preventDefault();
-        insertTag(this.value);
+        insertTag(this.value.toLowerCase());
         this.value = '';
         this.focus();
         return false;

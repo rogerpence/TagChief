@@ -37,6 +37,11 @@ span.tag {
     border: none;
     line-height: 16px;
     border: solid 1px dimgray;
+    /* Cause background to fade when changed. */
+    transition: background-color .5s linear;
+    -moz-transition: background-color .5s linear;
+    -webkit-transition: background-color .5s linear;
+    -ms-transition: background-color .5s linear;
 }
 
 a.tag-x {
@@ -52,6 +57,10 @@ span.tag:hover>.tag-x {
     visibility: visible;
 }
 
+.dupe-flash {
+    background-color: yellow !important;
+}
+
 .tag-text-input {
     border: none;
     padding-top: 2px;
@@ -62,6 +71,7 @@ span.tag:hover>.tag-x {
     margin-left: 4px;
     height: 22px;
     order: 500;
+    text-transform: lowercase;
 }
 
 @media only screen and (max-width: 320px) {
