@@ -25,7 +25,7 @@ var refreshTagsList = () => {
     });
 };
 
-var isDuplicate = function(tagText) {
+var isDuplicate = (tagText) => {
     const tagsList = getTagsTextAsArray();
 
     const isDupe = tagsList.includes(tagText);
@@ -92,10 +92,11 @@ document.querySelector('input.tag-text-input').addEventListener('keydown', funct
     }
 });
 
-function insertTag(tag) {
+var insertTag = (tag) => {
     const REMOVE_HANDLER_AFTER_FIRST_USE = true;
     const template = '<span style="order:1" id="tag-{{tag}}" class="tag">{{tag}}<a href="#" class="tag-x"><i data-tag="tag-{{tag}}" class="fa fa-trash"></i></a></span>';
-    //const template = '<span style="order:1" id="tag-{{tag}}" class="tag">{{tag}}<a href="#" class="tag-x"><span data-tag="tag-{{tag}}">x</span></a></span>';
+    // @todo: hmmm. Why doesn't this work?
+    // const template = '<span style="order:1" id="tag-{{tag}}" class="tag">{{tag}}<a href="#" class="tag-x"><span data-tag="tag-{{tag}}">x</span></a></span>';
     let html = template.replace(/{{tag}}/g, tag);
 
     // Insert new tag html immediately before tag
@@ -106,6 +107,13 @@ function insertTag(tag) {
 
     // Assign delete tag action on tag click. 
     let mytag = document.getElementById('tag-' + tag);
+
+    // @todo: The addEventListener's 'once' option is troublesome. I thought
+    // it was a good way to remove the listener before deleting the tag. 
+    // At usually it is; but it seems to be more sensitive to a sloppy 
+    // click than the click event somehow. It's not likely, but possible to 
+    // slightly click (if there is such a thing!) on a tag's trashcan and 
+    // have it not delete but the 'once' option will have removed its listener.
     mytag.addEventListener('click',
         function(e) {
             var tagOwnerId = e.target.getAttribute('data-tag');
@@ -119,7 +127,7 @@ function insertTag(tag) {
     );
 }
 
-function insertInitialTags(initialTags) {
+var insertInitialTags = (initialTags) => {
     initialTags.forEach(function(tag) {
         insertTag(tag);
     });
