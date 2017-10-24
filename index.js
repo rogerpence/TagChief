@@ -39,7 +39,7 @@ var isDuplicate = (tagText) => {
     }
 
     return isDupe;
-}
+};
 
 document.querySelector('#test-button').addEventListener('click', function(ev) {
     refreshTagsList();
@@ -92,6 +92,21 @@ document.querySelector('input.tag-text-input').addEventListener('keydown', funct
     }
 });
 
+var removeTag = (e) => {
+    let tagOwnerId = e.target.getAttribute('data-tag');
+    let tagOwnerElement = document.getElementById(tagOwnerId);
+
+    // Remove event listener.
+    tagOwnerElement.removeEventListener('click', removeTag);
+
+    // Remove tag element.
+    tagOwnerElement.parentElement.removeChild(tagOwnerElement);
+
+    refreshTagsList();
+    // Put focus back into input tag. 
+    document.querySelector('input.tag-text-input').focus();
+};
+
 var insertTag = (tag) => {
     const REMOVE_HANDLER_AFTER_FIRST_USE = true;
     const template = '<span style="order:1" id="tag-{{tag}}" class="tag">{{tag}}<a href="#" class="tag-x"><i data-tag="tag-{{tag}}" class="fa fa-trash"></i></a></span>';
@@ -103,29 +118,12 @@ var insertTag = (tag) => {
     ele = document.querySelector('input.tag-text-input');
     ele.insertAdjacentHTML('beforebegin', html);
 
-    refreshTagsList();
-
-    // Assign delete tag action on tag click. 
+    // Assign remove tag action on tag click. 
     let mytag = document.getElementById('tag-' + tag);
+    mytag.addEventListener('click', removeTag);
 
-    // @todo: The addEventListener's 'once' option is troublesome. I thought
-    // it was a good way to remove the listener before deleting the tag. 
-    // At usually it is; but it seems to be more sensitive to a sloppy 
-    // click than the click event somehow. It's not likely, but possible to 
-    // slightly click (if there is such a thing!) on a tag's trashcan and 
-    // have it not delete but the 'once' option will have removed its listener.
-    mytag.addEventListener('click',
-        function(e) {
-            var tagOwnerId = e.target.getAttribute('data-tag');
-            var tagOwnerElement = document.getElementById(tagOwnerId);
-            // Remove tag. Its click event handler is removed automatically.
-            tagOwnerElement.parentElement.removeChild(tagOwnerElement);
-            refreshTagsList();
-            // Put focus back into input tag. 
-            document.querySelector('input.tag-text-input').focus();
-        }, { 'once': REMOVE_HANDLER_AFTER_FIRST_USE }
-    );
-}
+    refreshTagsList();
+};
 
 var insertInitialTags = (initialTags) => {
     initialTags.forEach(function(tag) {
