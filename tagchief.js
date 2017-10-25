@@ -1,12 +1,15 @@
 var rp = rp || {};
 
 rp.tagchief = (function() {
+    const TAG_TEMPLATE_EDIT = '<span style="order:1" id="tag-{{tag}}" class="tag">{{tag}}<a href="#" class="tag-x"><i data-tag="tag-{{tag}}" class="fa fa-trash"></i></a></span>';
+    const TAG_TEMPLATE_READONLY = '<span class="tag">{{tag}}</span>';
+    // The following values are set (or changed) with setOptions().
+    let onTagRemoved = undefined;
+    let onTagAdded = undefined;
+    let inputTagIdForServer = "tag-list-for-server";
+    let tagTextInputId = 'tag-text-input';
 
-    let INPUT_TAG_ID_FOR_SERVER = "test-input";
-    const TAG_TEMPLATE_EDIT = '<span style="order:1" id="tag-{{tag}}" class="tag">{{tag}}<a href="#" class="tag-x"><i data-tag="tag-{{tag}}" class="fa fa-trash"></i></a></span>';    
-    const TAG_TEMPLATE_READONLY = '<span class="tag">{{tag}}</span>';    
-
-    document.querySelector('input.tag-text-input').addEventListener('keydown', function(ev) {
+    document.getElementById(tagTextInputId).addEventListener('keydown', function(ev) {
         const BACKSPACEKEY = 8;
         const TABKEY = 9;
         const ENTERKEY = 13;
@@ -31,6 +34,7 @@ rp.tagchief = (function() {
             e.preventDefault();
             this.focus();
             return false;
+
         } else if (e.keyCode == TABKEY || e.keyCode == ENTERKEY) {
             if (this.value.trim() == '') {
                 e.preventDefault();
@@ -45,7 +49,7 @@ rp.tagchief = (function() {
                 return false;
             }
 
-            insertTag(this.value.toLowerCase());
+            addTag(this.value.toLowerCase());
             this.value = '';
             e.preventDefault();
             this.focus();
@@ -70,7 +74,7 @@ rp.tagchief = (function() {
     var refreshTagsList = () => {
         const tagsList = getTagsTextAsArray();
 
-        document.getElementById(INPUT_TAG_ID_FOR_SERVER).value = tagsList.sort().join(',');
+        document.getElementById(inputTagIdForServer).value = tagsList.sort().join(',');
         let i = 1;
         tagsList.sort().forEach(function(element) {
             tagElement = document.getElementById('tag-' + element);
@@ -100,6 +104,8 @@ rp.tagchief = (function() {
         let tagOwnerId = e.target.getAttribute('data-tag');
         let tagOwnerElement = document.getElementById(tagOwnerId);
 
+        let tag = tagOwnerElement.textContent;
+
         // Remove event listener.
         tagOwnerElement.removeEventListener('click', removeTag);
 
@@ -108,7 +114,11 @@ rp.tagchief = (function() {
 
         refreshTagsList();
         // Put focus back into input tag. 
-        document.querySelector('input.tag-text-input').focus();
+        document.getElementById(tagTextInputId).focus();
+
+        if (typeof onTagRemoved == 'function') {
+            onTagRemoved(tag);
+        }
     };
 
     var getTagHtml = (tag, template) => {
@@ -117,11 +127,11 @@ rp.tagchief = (function() {
         return html;
     }
 
-    var insertTag = (tag) => {
+    var addTag = (tag) => {
         let html = getTagHtml(tag, TAG_TEMPLATE_EDIT);
 
         // Insert new tag html immediately before input tag
-        ele = document.querySelector('input.tag-text-input');
+        ele = document.getElementById(tagTextInputId);
         ele.insertAdjacentHTML('beforebegin', html);
 
         // Assign remove tag action on tag click. 
@@ -129,33 +139,83 @@ rp.tagchief = (function() {
         mytag.addEventListener('click', removeTag);
 
         refreshTagsList();
+
+        if (typeof onTagAdded == 'function') {
+            onTagAdded(tag);
+        }
     };
 
-    var getTagsForReadOnly = (targetId, initialTags) => {
+    var addTagsForReadOnly = (targetId, initialTags) => {
         let allTagsHtml = [];
 
         initialTags.sort().forEach(function(tag) {
-            let html= getTagHtml(tag, TAG_TEMPLATE_READONLY);
-            allTagsHtml.push(html)           
-        });            
+            let html = getTagHtml(tag, TAG_TEMPLATE_READONLY);
+            allTagsHtml.push(html)
+        });
 
-        let target = document.getElementById(targetId);        
-        target.insertAdjacentHTML('beforebegin', allTagsHtml.join(''));      
+        let target = document.getElementById(targetId);
+        target.insertAdjacentHTML('beforebegin', allTagsHtml.join(''));
     };
 
-    var insertInitialTags = (initialTags) => {
+    var addInitialTags = (initialTags) => {
         initialTags.forEach(function(tag) {
-            insertTag(tag);
+            addTag(tag);
         });
     };
 
+    var setOptions = (options) => {
+        if (options.hasOwnProperty('editableTags')) {
+            tagTextInputId = options.editableTags.tagTextInputId;
+            inputTagIdForServer = options.editableTags.inputTagIdForServer;
+            addInitialTags(options.editableTags.initialTags);
+            // Note that onTagAdded doesn't fire for tags added with 
+            // addInitialTags() method.
+            onTagRemoved = options.editableTags.onTagRemovedHandler;
+            onTagAdded = options.editableTags.onTagAddedHandler;
+        }
+        if (options.hasOwnProperty('outputTags')) {
+            addTagsForReadOnly(options.outputTags.containerId, options.outputTags.tags);
+        }
+    };
+
     return {
-        insertInitialTags: insertInitialTags,
-        getTagsForReadOnly: getTagsForReadOnly
+        addTagsForReadOnly: addTagsForReadOnly,
+        setOptions: setOptions
     };
 }());
 
-const initialTags = ['php', 'laravel'];
-rp.tagchief.insertInitialTags(initialTags);
 
-rp.tagchief.getTagsForReadOnly('tagOutputContainer', ['php', 'laravel', 'eloquent', 'db', 'mysql']);
+let options = {
+    // Other options to consider:
+    //   - mixedCaseTags
+    //   - allowDuplicateTags
+
+    // All of the editableTags properties are optional.
+
+    // Spell your keys correctly! An incorrect spelling won't cause an error.     
+    editableTags: {
+        tagTextInputId: 'tag-text-input', // default is 'tag-text-input'
+        inputTagIdForServer: 'tag-list-for-server', // default is 'tag-list-for-server'
+        initialTags: ['php', 'laravel'],
+        onTagAddedHandler: (tag) => {
+            // Add code here to be performed when a tag is added.
+            // The tag added is passed as the single argument to this event handler.
+            console.log('added: ' + tag);
+        },
+        onTagRemovedHandler: (tag) => {
+            // Add code here to be performed when a tag is removed.
+            // The tag removed is passed as the single argument to this event handler.
+            console.log('removed: ' + tag);
+        }
+    },
+
+    // If the outputTags key is provided, it must 
+    // provide both the 'tags' key and the 'containerId' key.
+    // This set of keys is only required if you're going to call 'addTagsForReadOnly'
+    outputTags: {
+        tags: ['php', 'laravel', 'eloquent', 'db', 'mysql'],
+        containerId: 'tag-output-container'
+    }
+};
+
+rp.tagchief.setOptions(options);

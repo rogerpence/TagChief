@@ -61,7 +61,7 @@ span.tag:hover>.tag-x {
     background-color: yellow !important;
 }
 
-.tag-text-input {
+.tag-input {
     border: none;
     padding-top: 2px;
     padding-bottom: 4px;
