@@ -2,10 +2,10 @@ body {
     font-family: sans-serif;
 }
 
-.flex-container {
-    width: 40%;
+.tags-container {
+    width: 100%;
     justify-content: left;
-    /* border: solid 1px red; */
+    border: solid 1px whitesmoke;
     flex-wrap: wrap;
     -webkit-flex-wrap: wrap;
     -ms-box-orient: horizontal;
@@ -44,7 +44,7 @@ span.tag {
     -ms-transition: background-color .5s linear;
 }
 
-a.tag-x {
+a.tag-x, a.tag-x-readonly {
     visibility: hidden;
     margin-left: 4px;
     color: rgb(58, 56, 56);

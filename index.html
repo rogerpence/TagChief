@@ -5,34 +5,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="index.css" rel="stylesheet" />
+    <link href="tagchief.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/ca38661c31.js"></script>
 
-    <title>Document</title>
-
+    <title>TagChief</title>
 </head>
 
 <body>
     <h2>TagChief prototype</h2> 
-    <div class="container">
-        <div class="flex-container">
+    <div class="container" style="width: 40%;">
+        <div class="tags-container">
+            <!--
+            The input tags are displayed in div.tags-flex-container tag. This div tag
+            must have an input.tag-text-input element in it. Tags are added to the page 
+            with insertAdjacentHTML preceeding this input tag. 
+            -->
             <input class="tag-text-input" type="text"></input>
         </div>
     </div>
 
     <br>
     <br>
-    <br>
-    <a href="#" id="test-button">Click me</a>
-
-    <br>
     <br> 
     This is the value that would be in a hidden input tag submitted to the server:
     <div>
         <input style="width: 500px;" id="test-input" type="text"></input>
     </div>
+
+    <br>
+    <br>
+    <br>
+    <h2>Tags output only</h2> 
+    <p>This is how the tags would display on any non-editable page (like a reader view of a blog post).</p>
+    <p>This is an example list; is _not_ built from the input test above. </p>
+
+    <div class="container" style="width: 40%;border: solid 1px lightgray;">
+        <div class="tags-container" id="tagOutputContainer">
+            <!--
+            The output tags are displayed in div.tags-flex-container tag. 
+            -->
+        </div>
+    </div>
+
 </body>
 
-<script src="index2.js"></script>
+<script src="tagchief.js"></script>
 
 </html>
