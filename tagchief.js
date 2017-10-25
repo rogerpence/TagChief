@@ -3,8 +3,8 @@ var rp = rp || {};
 rp.tagchief = (function() {
 
     let INPUT_TAG_ID_FOR_SERVER = "test-input";
-    const TEMPLATE_BUILD = '<span style="order:1" id="tag-{{tag}}" class="tag">{{tag}}<a href="#" class="tag-x"><i data-tag="tag-{{tag}}" class="fa fa-trash"></i></a></span>';    
-    const TEMPLATE_READONLY = '<span class="tag">{{tag}}</span>';    
+    const TAG_TEMPLATE_EDIT = '<span style="order:1" id="tag-{{tag}}" class="tag">{{tag}}<a href="#" class="tag-x"><i data-tag="tag-{{tag}}" class="fa fa-trash"></i></a></span>';    
+    const TAG_TEMPLATE_READONLY = '<span class="tag">{{tag}}</span>';    
 
     document.querySelector('input.tag-text-input').addEventListener('keydown', function(ev) {
         const BACKSPACEKEY = 8;
@@ -112,18 +112,15 @@ rp.tagchief = (function() {
     };
 
     var getTagHtml = (tag, template) => {
-        //const template = '<span style="order:1" id="tag-{{tag}}" class="tag">{{tag}}<a href="#" class="tag-x"><i data-tag="tag-{{tag}}" class="fa fa-trash"></i></a></span>';
-        // @todo: hmmm. Why doesn't this work?
-        // const template = '<span style="order:1" id="tag-{{tag}}" class="tag">{{tag}}<a href="#" class="tag-x"><span data-tag="tag-{{tag}}">x</span></a></span>';
         let html = template.replace(/{{tag}}/g, tag);
 
         return html;
     }
 
     var insertTag = (tag) => {
-        let html = getTagHtml(tag, TEMPLATE_BUILD);
+        let html = getTagHtml(tag, TAG_TEMPLATE_EDIT);
 
-        // Insert new tag html immediately before tag
+        // Insert new tag html immediately before input tag
         ele = document.querySelector('input.tag-text-input');
         ele.insertAdjacentHTML('beforebegin', html);
 
@@ -138,12 +135,11 @@ rp.tagchief = (function() {
         let allTagsHtml = [];
 
         initialTags.sort().forEach(function(tag) {
-            let html= getTagHtml(tag, TEMPLATE_READONLY);
+            let html= getTagHtml(tag, TAG_TEMPLATE_READONLY);
             allTagsHtml.push(html)           
         });            
 
         let target = document.getElementById(targetId);        
-        // target.insertAdjacentHTML('beforebegin', allTagsHtml.join('').replace(/tag-x/g,'tag-x-readyonly'));      
         target.insertAdjacentHTML('beforebegin', allTagsHtml.join(''));      
     };
 
