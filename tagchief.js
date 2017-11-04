@@ -35,7 +35,7 @@ rp.tagchief = (function() {
             this.focus();
             return false;
 
-        } else if (e.keyCode == TABKEY || e.keyCode == ENTERKEY) {
+        } else if (e.keyCode == ENTERKEY) {
             if (this.value.trim() == '') {
                 e.preventDefault();
                 this.focus();
@@ -61,9 +61,7 @@ rp.tagchief = (function() {
         const tags = document.querySelectorAll('span[id^="tag-"]');
         const tagsList = [];
 
-        let i = 0;
-
-        for (i = 0; i < tags.length; i++) {
+        for (let i = 0; i < tags.length; i++) {
             const tag = tags[i];
             tagsList.push(tag.textContent.trim());
         };
@@ -196,7 +194,7 @@ let options = {
     editableTags: {
         tagTextInputId: 'tag-text-input', // default is 'tag-text-input'
         inputTagIdForServer: 'tag-list-for-server', // default is 'tag-list-for-server'
-        initialTags: ['php', 'laravel'],
+        initialTags: [],
         onTagAddedHandler: (tag) => {
             // Add code here to be performed when a tag is added.
             // The tag added is passed as the single argument to this event handler.
@@ -212,10 +210,10 @@ let options = {
     // If the outputTags key is provided, it must 
     // provide both the 'tags' key and the 'containerId' key.
     // This set of keys is only required if you're going to call 'addTagsForReadOnly'
-    outputTags: {
-        tags: ['php', 'laravel', 'eloquent', 'db', 'mysql'],
-        containerId: 'tag-output-container'
-    }
+    // outputTags: {
+    //     tags: ['php', 'laravel', 'eloquent', 'db', 'mysql'],
+    //     containerId: 'tag-output-container'
+    // }
 };
 
 rp.tagchief.setOptions(options);

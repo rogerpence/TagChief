@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>DataList</title>
+</head>
+<body>
+    <a href="#" id="delete-tags">delete tags</a>&nbsp;
+    <a href="#" id="add-tags">add tags</a>&nbsp;
+
+    <br>
+
+    <input type="text" list="all-tags" id="tag-input">
+    <datalist id="all-tags">
+        <option value="css">
+        <option value="database">
+        <option value="devops">
+        <option value="javascript">
+        <option value="laravel">
+        <option value="mysql">
+        <option value="nginx">
+        <option value="php">
+        <option value="python">
+    </datalist>
+</body>
+
+<script>
+    const removeTagsFromDatalist = () => { 
+        el = document.getElementById('all-tags'); 
+        while (el.hasChildNodes()) { 
+            el.removeChild(el.lastChild); 
+        } 
+    }; 
+
+    let tags = ['zeus','css','database','devops','javascript','laravel','mysql','nginx','php','python'];
+
+    const addTagsToDataList = () => {
+        let tagList = [];
+       
+        for (let i = 0, len = tags.length; i < len; i++) { 
+            tagList.push(`<option value="${tags[i]}">`);
+        }
+
+        let el = document.getElementById('all-tags');
+        el.insertAdjacentHTML('afterbegin', tagList.sort().join(''));
+    };
+
+   
+    document.getElementById('delete-tags').addEventListener('click', removeTagsFromDatalist);
+    document.getElementById('add-tags').addEventListener('click', addTagsToDataList);
+
+
+</script>
+</html>
